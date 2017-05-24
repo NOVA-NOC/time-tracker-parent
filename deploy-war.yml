@@ -1,0 +1,23 @@
+---
+- hosts: tomcat
+  remote_user: root
+  tasks:
+  - name: stop tomcat
+#    command: systemctl stop tomcat
+    command: service tomcat stop
+    ignore_errors: true
+  - name: remove exiting war file
+    command: rm -rf /opt/tomcat/webapps/time-tracker-web-0.3.1-SNAPSHOT
+    ignore_errors: true
+  - command: rm -rf /opt/tomcat/webapps/time-tracker-web-0.3.1-SNAPSHOT.war
+    ignore_errors: true
+  - name: deploy war file on tomcat server
+    copy:
+      src: /var/lib/jenkins/workspace/devops-CICD/web/target/time-tracker-web-0.3.1-SNAPSHOT.war
+      dest: /opt/tomcat/webapps/
+      owner: tomcat
+      group: tomcat
+
+  - name: start tomcat server
+#    command: systemctl start tomcat
+    command: service tomcat start
